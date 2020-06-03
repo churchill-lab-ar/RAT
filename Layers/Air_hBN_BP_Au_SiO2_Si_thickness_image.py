@@ -152,8 +152,8 @@ Si_incident_angle = RAT.snell(SiO2_complex_index, Si_complex_index, SiO2_inciden
 ################################################################################
 
 # File Names #
-fig1name = '../Data/saved_figures/Air_hBN_BP_Au_SiO2_Si/Air_hBN_BP_Au(' + str(Au_thickness_value) + ')_SiO2_Si_Ap_ac_image-' + str(wavelength) + imageFileType
-fig2name = '../Data/saved_figures/Air_hBN_BP_Au_SiO2_Si/Air_hBN_BP_Au(' + str(Au_thickness_value) + ')_SiO2_Si_Ap_zz_image-' + str(wavelength) + imageFileType
+fig1name = '../Data/saved_figures/Air_hBN_BP_Au(' + str(Au_thickness_value) + ')_SiO2_Si_Ap_ac_image-' + str(wavelength) + imageFileType
+fig2name = '../Data/saved_figures/Air_hBN_BP_Au(' + str(Au_thickness_value) + ')_SiO2_Si_Ap_zz_image-' + str(wavelength) + imageFileType
 ################################################################################
 ################################################################################
 def CalculateRAT(BP_thickness, hBN_thickness):
