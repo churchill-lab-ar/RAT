@@ -2,7 +2,7 @@
 import sys
 import numpy as np
 from numpy import cos, inf, zeros, array, exp, conj, nan, isnan, pi, sqrt, sin, arcsin, dot, real, complex, empty
-from scipy.constants import *
+from scipy.constants import degree
 import pandas as pd
 sys.path.append("..")
 from RAT_core import RAT as RAT
@@ -13,7 +13,7 @@ imageFileType = '.pdf'
 ################################################################################
 ################################################################################
 # wavelength = 780  # nm
-wavelength = 1550  # nm
+wavelength = 1560  # nm
 ################################################################################
 ################################################################################
 # Incident Angle, theta :: degree
@@ -97,13 +97,13 @@ BP_mu_r = BP_mu_r_value
 # Authors::         R. Schuster, J. Trinckauf, C. Habenicht, M. Knupfer, and B. Büchner
 # DOI::             https://doi.org/10.1103/PhysRevLett.115.026404
 # Year::            2015
-BP_epsilon1_ac_fileName = '../Data/import_data/BP_ac_epsilon1_NIR_VIS_Schuter.txt'
+BP_epsilon1_ac_fileName = '../Data/import_data/BP_ac_epsilon1_NIR_VIS_Schuster.txt'
 BP_wavelength_epsilon1_ac_nm, BP_epsilon1_ac_real_interpolate = RAT.load_epsilons_data(BP_epsilon1_ac_fileName, delimiter=', ', unit='eV', columnNumber='2')
-BP_epsilon1_zz_fileName = '../Data/import_data/BP_zz_epsilon1_NIR_VIS_Schuter.txt'
+BP_epsilon1_zz_fileName = '../Data/import_data/BP_zz_epsilon1_NIR_VIS_Schuster.txt'
 BP_wavelength_epsilon1_zz_nm, BP_epsilon1_zz_real_interpolate = RAT.load_epsilons_data(BP_epsilon1_zz_fileName, delimiter=', ', unit='eV', columnNumber='2')
-BP_epsilon2_ac_fileName = '../Data/import_data/BP_ac_epsilon2_NIR_VIS_Schuter.txt'
+BP_epsilon2_ac_fileName = '../Data/import_data/BP_ac_epsilon2_NIR_VIS_Schuster.txt'
 BP_wavelength_epsilon2_ac_nm, BP_epsilon2_ac_imag_interpolate = RAT.load_epsilons_data(BP_epsilon2_ac_fileName, delimiter=', ', unit='eV', columnNumber='2')
-BP_epsilon2_zz_fileName = '../Data/import_data/BP_zz_epsilon2_NIR_VIS_Schuter.txt'
+BP_epsilon2_zz_fileName = '../Data/import_data/BP_zz_epsilon2_NIR_VIS_Schuster.txt'
 BP_wavelength_epsilon2_zz_nm, BP_epsilon2_zz_imag_interpolate = RAT.load_epsilons_data(BP_epsilon2_zz_fileName, delimiter=', ', unit='eV', columnNumber='2')
 BP_epsilon1_ac = BP_epsilon1_ac_real_interpolate(wavelength)
 BP_epsilon2_ac = BP_epsilon2_ac_imag_interpolate(wavelength)
@@ -182,34 +182,24 @@ def CalculateRAT(BP_thickness, hBN_thickness):
     #   Air/hBN/BP_ac/Au/SiO2/Si
     totalMatrix_ac_s = RAT.TransferMatrix(Air_M_s, hBN_M_s, BP_M_ac_s, Au_M_ac_s, SiO2_M_ac_s, Si_M_ac_s)
     Rs_ac = real(RAT.Reflectance(Air_eta_s, totalMatrix_ac_s))
-    As_ac = real(RAT.Absorbance(Air_eta_s, Si_eta_ac_s, totalMatrix_ac_s))
+    As_ac = real(RAT.Absorbance(Air_eta_s, Au_eta_ac_s, totalMatrix_ac_s))
     Ts_ac = real(RAT.Transmittance(Air_eta_s, Si_eta_ac_s, totalMatrix_ac_s))
     #   Air/hBN/BP_zz/Au/SiO2/Si
-    totalMatrix_zz_s = RAT.TransferMatrix(Air_M_s, hBN_M_s, BP_M_zz_s, Au_M_ac_s, SiO2_M_zz_s, Si_M_zz_s)
+    totalMatrix_zz_s = RAT.TransferMatrix(Air_M_s, hBN_M_s, BP_M_zz_s, Au_M_zz_s, SiO2_M_zz_s, Si_M_zz_s)
     Rs_zz = real(RAT.Reflectance(Air_eta_s, totalMatrix_zz_s))
-    As_zz = real(RAT.Absorbance(Air_eta_s, Si_eta_zz_s, totalMatrix_zz_s))
+    As_zz = real(RAT.Absorbance(Air_eta_s, Au_eta_zz_s, totalMatrix_zz_s))
     Ts_zz = real(RAT.Transmittance(Air_eta_s, Si_eta_zz_s, totalMatrix_zz_s))
     # p-polarized Light ::
     #   Air/hBN/BP_ac/Au/SiO2/Si
     totalMatrix_ac_p = RAT.TransferMatrix(Air_M_p, hBN_M_p, BP_M_ac_p, Au_M_ac_p, SiO2_M_ac_p, Si_M_ac_p)
     Rp_ac = real(RAT.Reflectance(Air_eta_p, totalMatrix_ac_p))
-    Ap_ac = real(RAT.Absorbance(Air_eta_p, Si_eta_ac_p, totalMatrix_ac_p))
+    Ap_ac = real(RAT.Absorbance(Air_eta_p, Au_eta_ac_p, totalMatrix_ac_p))
     Tp_ac = real(RAT.Transmittance(Air_eta_p, Si_eta_ac_p, totalMatrix_ac_p))
     #   Air/hBN/BP_zz/Au/SiO2/Si
     totalMatrix_zz_p = RAT.TransferMatrix(Air_M_p, hBN_M_p, BP_M_zz_p, Au_M_zz_p, SiO2_M_zz_s, Si_M_zz_p)
     Rp_zz = real(RAT.Reflectance(Air_eta_p, totalMatrix_zz_p))
-    Ap_zz = real(RAT.Absorbance(Air_eta_p, Si_eta_zz_p, totalMatrix_zz_p))
+    Ap_zz = real(RAT.Absorbance(Air_eta_p, Au_eta_zz_p, totalMatrix_zz_p))
     Tp_zz = real(RAT.Transmittance(Air_eta_p, Si_eta_zz_p, totalMatrix_zz_p))
-    ################################################################################
-    ################################################################################
-    Rs = ((Rs_ac + Rs_zz) / 2)
-    As = ((As_ac + As_zz) / 2)
-    Ts = ((Ts_ac + Ts_zz) / 2)
-    ################################################################################
-    ################################################################################
-    Rp = ((Rp_ac + Rp_zz) / 2)
-    Ap = ((Ap_ac + Ap_zz) / 2)
-    Tp = ((Tp_ac + Tp_zz) / 2)
     ################################################################################
     ################################################################################
     R_ac = ((Rs_ac + Rp_ac) / 2)
@@ -259,16 +249,16 @@ for j in range(0, len(hBN_thickness_array)):
         Rs_ac_image[j, i], As_ac_image[j, i], Ts_ac_image[j, i], Rp_ac_image[j, i], Ap_ac_image[j, i], Tp_ac_image[j, i], Rs_zz_image[j, i], As_zz_image[j, i], Ts_zz_image[j, i], Rp_zz_image[j, i], Ap_zz_image[j, i], Tp_zz_image[j, i], R_image[j, i], A_image[j, i], T_image[j, i] = CalculateRAT(mm, nn)
 ################################################################################
 ################################################################################
-np.savetxt('../Data/saved_files/Ap_ac_' + str(wavelength) + 'nm.txt', Ap_ac_image)
-np.savetxt('../Data/saved_files/Ap_zz_' + str(wavelength) + 'nm.txt', Ap_zz_image)
-np.savetxt("../Data/saved_files/BP_thickness_array.txt", BP_thickness_array)
-np.savetxt("../Data/saved_files/hBN_thickness_array.txt", hBN_thickness_array)
+np.savetxt('../Data/saved_files/Air_hBN_BP_Au_SiO2_Si_Ap_ac_imageData-' + str(wavelength) + 'nm.txt', Ap_ac_image)
+np.savetxt('../Data/saved_files/Air_hBN_BP_Au_SiO2_Si_Ap_zz_imageData-' + str(wavelength) + 'nm.txt', Ap_zz_image)
+np.savetxt('../Data/saved_files/Air_hBN_BP_Au_SiO2_Si-BP_thickness-' + str(wavelength) + 'nm.txt', BP_thickness_array)
+np.savetxt('../Data/saved_files/Air_hBN_BP_Au_SiO2_Si-hBN_thickness-' + str(wavelength) + 'nm.txt', hBN_thickness_array)
 ################################################################################
 ################################################################################
 AbsorbanceTitle = 'Air/hBN/BP/Au(' + str(Au_thickness) + ')/SiO2/Si :: Ap_ac'
 RAT.plotImage(1, BP_thickness_array, hBN_thickness_array, Ap_ac_image, label='Ap_ac', xAxis='BP Thickness (nm)', yAxis='hBN Thickness (nm)', colorBar='Absorbance, Ap_ac', title=AbsorbanceTitle, FigureFileName=fig1name)
 
-AbsorbanceTitle = 'Air/hBN/BP/Au(' + str(Au_thickness) + ')/Si :: Ap_zz'
+AbsorbanceTitle = 'Air/hBN/BP/Au(' + str(Au_thickness) + ')/SiO2/Si :: Ap_zz'
 RAT.plotImage(2, BP_thickness_array, hBN_thickness_array, Ap_zz_image, label='Ap_zz', xAxis='BP Thickness (nm)', yAxis='hBN Thickness (nm)', colorBar='Absorbance, Ap_zz', title=AbsorbanceTitle, FigureFileName=fig2name)
 ################################################################################
 ################################################################################
